@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>文物 WebAR 科普（青铜器 - 卡通写实）</title>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <!-- AR.js NFT 版 -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.2/aframe/build/aframe-ar-nft.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- AR 场景 -->
+  <a-scene
+    embedded
+    renderer="logarithmicDepthBuffer: true"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+
+    <!-- 摄像机 -->
+    <a-entity camera></a-entity>
+
+    <!-- NFT 识别目标 (不带扩展名，放在 /nft/artifact.* ) -->
+    <a-nft
+      type="nft"
+      url="./nft/artifact"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance="0.01"
+      smoothThreshold="5"
+      emitevents="true">
+
+      <!-- 卡通写实青铜器模型（占位） -->
+      <a-entity
+        id="artifactModel"
+        gltf-model="assets/models/artifact.glb"
+        scale="0.15 0.15 0.15"
+        position="0 0 0"
+        rotation="0 180 0"
+        animation-mixer>
+      </a-entity>
+
+    </a-nft>
+
+    <!-- 灯光 -->
+    <a-entity light="type: ambient; intensity: 1"></a-entity>
+    <a-entity light="type: directional; intensity: 0.6" position="1 2 1"></a-entity>
+  </a-scene>
+
+  <!-- 聊天 UI -->
+  <div id="chat-ui">
+    <div id="log"><em>请将摄像头对准青铜器图片以启动 AR 体验。</em></div>
+    <input id="question" placeholder="请用简洁中文提问（例如：这是什么？年代？用途？）" />
+    <button id="sendBtn">发送</button>
+    <div id="status" class="muted">模式：博物馆志愿者讲解（正式风格） · 模型风格：卡通写实</div>
+  </div>
+
+  <script src="js/chat.js"></script>
+  <script>
+    // 小幅 UI 行为：当 markerFound/markerLost 发生时，更新提示
+    const scene = document.querySelector('a-scene');
+    scene.addEventListener('markerFound', () => {
+      const log = document.getElementById('log');
+      log.innerHTML += '<div class="event">已识别青铜器图像，模型已显示。</div>';
+      log.scrollTop = log.scrollHeight;
+    });
+    scene.addEventListener('markerLost', () => {
+      const log = document.getElementById('log');
+      log.innerHTML += '<div class="event">文物图像丢失，模型隐藏。</div>';
+      log.scrollTop = log.scrollHeight;
+    });
+  </script>
+</body>
+</html>
